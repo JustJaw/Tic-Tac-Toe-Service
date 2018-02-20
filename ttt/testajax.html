@@ -1,0 +1,34 @@
+
+<body>
+
+    <button id="clickBtn">API CALL</button>
+    <div id="content"></div>
+
+</body>
+
+
+<script>
+console.log("IN");
+
+document.getElementById("clickBtn").oncl(function() {
+    $.ajax({
+        type: "POST",
+        url: "http://130.245.171.42/ttt/play",
+        data: {
+            "email": "TismMan@gmail.com",
+            "password": "tmp",
+            "doc": "DOCS BABY!"
+        },
+        success: function(data) {
+            console.log(data)
+            document.getElementById("content").innerHTML = JSON.stringify(data)
+        },
+        error: function(data) {
+            console.log(data)
+            document.getElementById("content").innerHTML = JSON.stringify(data)
+        },
+        dataType: "JSON"
+    });
+})
+
+</script>

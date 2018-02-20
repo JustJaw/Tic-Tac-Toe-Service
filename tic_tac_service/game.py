@@ -1,4 +1,4 @@
-# game.py
+# Module: game.py
 
 import falcon
 
@@ -75,6 +75,4 @@ class PlayResource:
             )
 
 
-api = falcon.API()
-api.add_route('/ttt/play', PlayResource())
-#api.add_route('/adduser')
+

@@ -1,6 +1,4 @@
-from email.Utils import formatdate
 import smtplib
-from email import Encoders
 import os
 
 SERVER = 'localhost'

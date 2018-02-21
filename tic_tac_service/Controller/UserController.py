@@ -1,7 +1,7 @@
 import falcon
 from pymongo import MongoClient
 import smtplib
-import MailController
+import Controller.MailController as MailResource
 
 KEY = "abracadabra"
 FROM = 'JustinandTed@python.com'
@@ -17,7 +17,7 @@ class addUser:
 
         email_message = "This is your key\n\tKEY : " + KEY
 
-        MailController.sendMail(user['email'], email_message)
+        MailResource.sendMail(user['email'], email_message)
 
         print(user)
         resp.media = user

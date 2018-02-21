@@ -1,23 +1,12 @@
 import falcon
 from pymongo import MongoClient
 import smtplib
+import MailController
 
 KEY = "abracadabra"
 FROM = 'JustinandTed@python.com'
 SUBJECT = "Hello!"
 TEXT = "This message was sent with Python's smtplib."
-
-def sendMail(user):
-
-    toUser = [user['email']]  # must be a list
-
-    # Prepare actual message
-    message = "This is your key\n\tKEY : " + KEY
-
-    # Send the mail
-    server = smtplib.SMTP('localhost')
-    server.sendmail(FROM, toUser, message)
-    server.quit()
 
 class addUser:
     def on_post(self, req, resp):
@@ -26,7 +15,9 @@ class addUser:
         user['winner'] = " "
         user['grid'] = [" "," "," "," "," "," "," "," "]
 
-        sendMail(user)
+        email_message = "This is your key\n\tKEY : " + KEY
+
+        MailController.sendMail(user['email'], email_message)
 
         print(user)
         resp.media = user

@@ -1,6 +1,7 @@
 import falcon
-import game
+import routes
+
 
 api = falcon.API()
-api.add_route('/ttt/play', game.PlayResource())
-#api.add_route('/adduser')
+api = routes.addRoutes(api)
+    

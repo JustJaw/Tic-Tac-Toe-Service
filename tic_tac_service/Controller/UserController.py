@@ -86,14 +86,17 @@ class login:
 
         Temp_username = user['username']
         Temp_password = user['password']
-
+        Temp_id = user['_id']
 
         userFromDB = usersCollection.find_one({"username":  Temp_username})
 
 
         if userFromDB['password'] == Temp_password:
 
-            resp.set_cookie('username', Temp_username, 'password', Temp_password)
+
+
+
+            resp.set_cookie('theCookie', Temp_id)
 
 
 
@@ -109,6 +112,6 @@ class logout:
         user=req.media
         Temp_username = user['username']
         Temp_password = user['password']
+        Temp_id = user['_id']
 
-
-        resp.unset_cookie(Temp_username, Temp_password)
+        resp.unset_cookie('theCookie')

@@ -4,6 +4,7 @@ from pymongo.collection import ReturnDocument
 import smtplib
 import Controller.MailController as MailResource
 from bson import json_util, ObjectId
+import GameController as Game
 
 KEY = "abracadabra"
 
@@ -19,8 +20,16 @@ class addUser:
     def on_post(self, req, resp):
         user = req.media
         user['enabled'] = False
-        user['winner'] = " "
-        user['grid'] = [" ", " ", " ", " ", " ", " ", " ", " "]
+        user['human'] = 0
+        user['wopr'] = 0
+        user['tie'] = 0
+
+        currentGame = {}
+        currentGame['move'] = Game.EMPTY_SPACE
+        currentGame['winner'] = Game.NO_WINNER_YET
+        currentGame['grid'] = Game.EMPTY_GRID
+
+        user['current_game'] = currentGame
 
         email_message = "This is your key\n\tKEY : " + KEY
 
@@ -57,14 +66,6 @@ class verifyUser:
             print(userFromDB)
             resp.media = {"success": "You have been verified"}
             return
-
-        if userFromDB == "":    
-            print("Wrong email")
-        else:
-            userFromDB['enabled'] = True
-            collection.update_one({'_id': userFromDB['_id']}, {
-                                  "$set": user_enabled}, upsert=False)
-            resp.media =user
 
 
 class cookieTest:

@@ -93,7 +93,7 @@ class login:
 
         if userFromDB['password'] == Temp_password:
 
-            resp.set_cookie(username= Temp_username, password=Temp_password)
+            resp.set_cookie('username', Temp_username, 'password', Temp_password)
 
 
 

@@ -111,5 +111,4 @@ class logout:
 
     def on_post(self, req, resp):
       
-  
         resp.unset_cookie('theCookie')

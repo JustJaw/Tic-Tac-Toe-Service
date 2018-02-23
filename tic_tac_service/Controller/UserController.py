@@ -102,13 +102,13 @@ class login:
 
 
         else:
-             print("Wrong username/password sorry")
+             resp.body="Wrong username/password sorry"
 
 
 
 
 class logout:
-
+    no_auth = True
     def on_post(self, req, resp):
       
         resp.unset_cookie('theCookie')

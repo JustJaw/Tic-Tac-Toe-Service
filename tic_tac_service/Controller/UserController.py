@@ -58,7 +58,12 @@ class verifyUser:
             resp.media = {"success": "You have been verified"}
             return
 
-class cookieTest:
-    def on_get(self, req, resp):
-        resp.body = req.cookies['cookie']
+        if userFromDB == "":    
+            print("Wrong email")
+        else:
+            userFromDB['enabled'] = True
+            collection.update_one({'_id': userFromDB['_id']}, {
+                                  "$set": user_enabled}, upsert=False)
+            resp.media =user
+    
 

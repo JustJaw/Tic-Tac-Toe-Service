@@ -16,6 +16,8 @@ EMPTY_GRID = [EMPTY_SPACE] * GRID_SIZE
 
 last_move_index = 0
 
+
+
 def get_win_vector(grid, player):
     if(grid.count(player) == VECTOR_SIZE):
         return player
@@ -63,6 +65,7 @@ def save_complete_game(gameplay,user_id,user):
         "user_id": user_id,
         "id" : " ", #id for the game that is automatically set in mongo,
         "gameplay" : gameplay
+        "start_date": " ", #start date for the game 
     }
 
     DB.games.insert
@@ -127,4 +130,40 @@ class GamesResource:
         resp.body = json_util.dumps(games)
 
 
+########### added by teddy onwards
+class listgames:
 
+    no_auth = True
+
+    def on_post(self, req, resp):
+
+        games = DB.games.find()
+        
+        resp.body = json_util.dumps(games)
+        return;
+
+
+class getgame:
+
+    no_auth = True
+
+    def on_post(self, req, resp):
+
+        Tempgame=req.media
+
+        gameID= Tempgame['id'] 
+        
+        gameFromDB = games.find_one({"id": gameID})
+
+        if gameFromDB is not None:
+
+            TempGameplay= gameFromDB['gameplay']
+            
+            TempGrid = TempGameplay['grid']
+            
+            TempWinner= TempGameplay['winner']
+
+            resp.media = {"Status": "Ok", "grid":TempGrid, "winner":TempWinner }
+
+        else:
+            resp.body="Wrong ID"

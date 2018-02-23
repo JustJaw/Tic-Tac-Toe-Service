@@ -7,6 +7,6 @@ def addRoutes(api):
     api.add_route('/adduser', UserResource.addUser())
     api.add_route('/verify', UserResource.verifyUser())
     api.add_route('/getcookie', UserResource.cookieTest())
-    api.add_route('/login', UserResource.cookieTest())
-    api.add_route('/logout', UserResource.cookieTest())
+    api.add_route('/login', UserResource.login())
+    api.add_route('/logout', UserResource.logout())
     return api

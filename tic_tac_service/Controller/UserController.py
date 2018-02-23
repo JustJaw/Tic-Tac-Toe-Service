@@ -90,10 +90,11 @@ class login:
 
         userFromDB = usersCollection.find_one({"username":  Temp_username})
          
-        Temp_id = str(userFromDB['_id'])
+      
 
-        if userFromDB['password'] == Temp_password:
+        if userFromDB is None and userFromDB['password'] == Temp_password:
 
+            Temp_id = str(userFromDB['_id'])
 
 
 

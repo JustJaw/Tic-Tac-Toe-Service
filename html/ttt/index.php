@@ -96,6 +96,10 @@ if($_POST["name"]) {
 
     });
 
+    var placeMove = function(player, move){
+        
+    }
+
     var playMove = function() {
         
         var theData = {
@@ -109,9 +113,14 @@ if($_POST["name"]) {
             url: "http://130.245.171.42/ttt/play",
             data: JSON.stringify(theData),
             success: function (data) {
-                console.log(data)
-                serverMove = data.last_move;
+                winner = data.winner;
+                serverMove = data.move;
                 grid[serverMove] = O
+
+                if(winner == X || winner == O) {
+                    alert(winner + " WINS!")
+                }
+                else if(w)
             },
             error: function (data) {
                 console.log(data)

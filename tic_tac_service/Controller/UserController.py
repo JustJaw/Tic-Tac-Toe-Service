@@ -92,7 +92,7 @@ class login:
          
       
 
-        if userFromDB is None and userFromDB['password'] == Temp_password:
+        if userFromDB is not None and userFromDB['password'] == Temp_password:
 
             Temp_id = str(userFromDB['_id'])
 

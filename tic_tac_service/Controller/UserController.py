@@ -19,6 +19,15 @@ class addUser:
 
         MailResource.sendMail(user['email'], email_message)
 
+
+#added these lines to check if username/email already exist in mongodb -TED ###
+        client = MongoClient()
+        db = client['tic-tac-toe']
+
+        collection= db['users']
+
+        db.collection.createIndex({email: 1, username:1},{unique:true})
+############ 
         print(user)
         resp.media = user
 
@@ -39,6 +48,10 @@ class verifyUser:
         if userFromDB == "":    
             print("Wrong email")
         else:
+
+
+
+
             userFromDB['enabled'] = True
             collection.update_one({'_id': userFromDB['_id']}, {
                                   "$set": user_enabled}, upsert=False)

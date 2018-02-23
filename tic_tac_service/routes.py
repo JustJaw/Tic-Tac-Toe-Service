@@ -10,4 +10,8 @@ def addRoutes(api):
     api.add_route('/login', UserController.login())
     api.add_route('/logout', UserController.logout())
     api.add_route('/listgames', GameController.GamesResource())
+    api.add_route('/getgameboard', GameController.GameBoard())
     return api
+
+
+

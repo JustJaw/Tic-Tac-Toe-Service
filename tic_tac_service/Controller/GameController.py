@@ -47,17 +47,17 @@ def determine_winner(grid,player):
 
 
 def save_complete_game(gameplay,user_id,user):
+    the_winner = {}
     if gameplay.winner is CLIENT_PLAYER:
-        winnerName = "human"
+        the_winner["human"] = 1
     elif gameplay.winner is SERVER_PLAYER:
-        winnerName = "wopr"
+        the_winner["wopr"] = 1
     elif gameplay.winner is TIE_WINNER:
-        winnerName = "tie"
-    
+        the_winner["tie"] = 1
     
 
-    userFromDB = usersCollection.find_one_and_update({'_id': userFromDB['_id']}, {
-        "$inc": user_enabled}, return_document=ReturnDocument.AFTER)
+    userFromDB = DB.users.find_one_and_update({'_id': user_id}, {
+        "$inc": the_winner}, return_document=ReturnDocument.AFTER)
 
     game = {
         "user_id": user_id,
@@ -65,9 +65,8 @@ def save_complete_game(gameplay,user_id,user):
         "gameplay" : gameplay
     }
 
-    DB.games.insert
+    DB.games.insert()
 
-    #DB.users
 
 
 
@@ -78,16 +77,19 @@ class PlayResource:
 
     def on_post(self, req, resp):
         try:
-            grid = req.media['grid']
             move = req.media['move']
             winner = NO_WINNER_YET
 
             user_id = req.cookies['theCookie']
 
-            usersCollection.find_one({"_id": user_id})
+            user = usersCollection.find_one({"_id": user_id})
+            game = usersCollection.find_one({"user_id": user_id, "finished" : False})
+            grid = game['grid']
             
-            if move is not None:
+            if move is not None and grid[move] is EMPTY_SPACE:
+                grid[move] = CLIENT_PLAYER
                 winner = determine_winner(grid, CLIENT_PLAYER)
+                
                 if(winner != CLIENT_PLAYER): 
                     try:
                         move = grid.index(EMPTY_SPACE)
@@ -99,14 +101,19 @@ class PlayResource:
             gameplay = {
                 'grid': grid,
                 'winner': winner,
-                'move': move
+                'last_move': move
             }
 
 
             # Clear grid and saves game if winner is decided
             if (winner is CLIENT_PLAYER or winner is SERVER_PLAYER or winner is TIE_WINNER):
                 #save_complete_game(gameplay, user_id)
-                grid = EMPTY_GRID
+                gameplay['grid'] = EMPTY_GRID
+                gameplay['winner'] = NO_WINNER_YET
+                gameplay['move'] = None
+            
+            #save_game(gameplay, user_id)
+            ttt = 1
 
             
 

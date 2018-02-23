@@ -4,14 +4,10 @@ from pymongo.collection import ReturnDocument
 import smtplib
 import Controller.MailController as MailResource
 from bson import json_util, ObjectId
-import GameController as Game
+import Controller.GameController as Game
+import dbmongo as DB
 
 KEY = "abracadabra"
-
-
-client = MongoClient()
-db = client['tic-tac-toe']
-usersCollection = db['users']
 
 
 class addUser:
@@ -24,20 +20,22 @@ class addUser:
         user['wopr'] = 0
         user['tie'] = 0
 
-        currentGame = {}
-        currentGame['move'] = Game.EMPTY_SPACE
-        currentGame['winner'] = Game.NO_WINNER_YET
-        currentGame['grid'] = Game.EMPTY_GRID
-
-        user['current_game'] = currentGame
-
         email_message = "This is your key\n\tKEY : " + KEY
 
         #MailResource.sendMail(user['email'], email_message)
 
-        usersCollection.insert(user)
+        user_id = DB.users.insert_one(user).inserted_id
+        
+        currentGame = {}
+        currentGame['winner'] = Game.NO_WINNER_YET
+        currentGame['grid'] = Game.EMPTY_GRID
+        currentGame['start_date'] = None
+        currentGame['finished'] = False
+        currentGame['user_id'] = user_id
 
-        resp.body = json_util.dumps(user)
+        DB.games.insert_one(currentGame)
+
+        resp.media = {"status": "OK"}
         return
 
 
@@ -48,10 +46,10 @@ class verifyUser:
         user = req.media
         userEmail = user['email']
 
-        userFromDB = usersCollection.find_one({"email": userEmail})
+        userFromDB = DB.users.find_one({"email": userEmail})
 
         if userFromDB is None:
-            resp.media = {"error": "Wrong Email"}
+            resp.media = {"status": "error" , "error": "Wrong Email"}
             return
         else:
             if user['key'] != KEY:
@@ -60,11 +58,11 @@ class verifyUser:
                     'Incorrect key')
 
             user_enabled = {"enabled": True}
-            userFromDB = usersCollection.find_one_and_update({'_id': userFromDB['_id']}, {
+            userFromDB = DB.users.find_one_and_update({'_id': userFromDB['_id']}, {
                 "$set": user_enabled}, return_document=ReturnDocument.AFTER)
 
             print(userFromDB)
-            resp.media = {"success": "You have been verified"}
+            resp.media = {"status": "OK"}
             return
 
 
@@ -88,9 +86,8 @@ class login:
         Temp_username = user['username']
         Temp_password = user['password']
   
+        userFromDB = DB.users.find_one({"username":  Temp_username})
 
-        userFromDB = usersCollection.find_one({"username":  Temp_username})
-         
       
 
         if userFromDB is not None and userFromDB['password'] == Temp_password:

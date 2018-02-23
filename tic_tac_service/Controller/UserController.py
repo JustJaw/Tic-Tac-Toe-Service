@@ -65,5 +65,11 @@ class verifyUser:
             collection.update_one({'_id': userFromDB['_id']}, {
                                   "$set": user_enabled}, upsert=False)
             resp.media =user
+
+
+class cookieTest:
+    def on_get(self, req, resp):
+        resp.body = req.cookies['cookie']
+
     
 

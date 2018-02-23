@@ -14,8 +14,8 @@ usersCollection = db['users']
 
 
 class addUser:
-    no_cookie = True
-    
+    no_auth = True
+
     def on_post(self, req, resp):
         user = req.media
         user['enabled'] = False
@@ -33,6 +33,8 @@ class addUser:
 
 
 class verifyUser:
+    no_auth = True
+
     def on_post(self, req, resp):
         user = req.media
         userEmail = user['email']
@@ -55,3 +57,8 @@ class verifyUser:
             print(userFromDB)
             resp.media = {"success": "You have been verified"}
             return
+
+class cookieTest:
+    def on_get(self, req, resp):
+        resp.body = req.cookies['cookie']
+

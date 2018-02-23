@@ -106,9 +106,9 @@ def on_post(self, req, resp):
 class logout:
 
     def on_post(self, req, resp):
-    user=req.media
-    Temp_username = user['username']
-    Temp_password = user['password']
+        user=req.media
+        Temp_username = user['username']
+        Temp_password = user['password']
 
 
-    resp.unset_cookie(Temp_username, Temp_password)
+        resp.unset_cookie(Temp_username, Temp_password)

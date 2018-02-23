@@ -74,31 +74,31 @@ class cookieTest:
     
 
 class login:
-  no_auth = True
+    no_auth = True
 
 
 
-def on_post(self, req, resp):
+    def on_post(self, req, resp):
 
 
-    user=req.media
+        user=req.media
 
 
-    Temp_username = user['username']
-    Temp_password = user['password']
+        Temp_username = user['username']
+        Temp_password = user['password']
 
 
-    userFromDB = usersCollection.find_one({"username":  Temp_username})
+        userFromDB = usersCollection.find_one({"username":  Temp_username})
 
 
-    if userFromDB['password'] == Temp_password:
+        if userFromDB['password'] == Temp_password:
 
-        resp.set_cookie(username= Temp_username, password=Temp_password)
+            resp.set_cookie(username= Temp_username, password=Temp_password)
 
 
 
-    else:
-         print("Wrong username/password sorry")
+        else:
+             print("Wrong username/password sorry")
 
 
 

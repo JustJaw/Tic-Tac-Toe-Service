@@ -74,3 +74,43 @@ class cookieTest:
 
     
 
+class login:
+    no_auth = True
+
+
+
+    def on_post(self, req, resp):
+
+
+        user=req.media
+
+
+        Temp_username = user['username']
+        Temp_password = user['password']
+  
+
+        userFromDB = usersCollection.find_one({"username":  Temp_username})
+         
+      
+
+        if userFromDB is not None and userFromDB['password'] == Temp_password:
+
+            Temp_id = str(userFromDB['_id'])
+
+
+
+            resp.set_cookie('theCookie', Temp_id)
+
+
+
+        else:
+             resp.body="Wrong username/password sorry"
+
+
+
+
+class logout:
+    no_auth = True
+    def on_post(self, req, resp):
+      
+        resp.unset_cookie('theCookie')

@@ -10,7 +10,7 @@ class Middleware(object):
         
     #Process the request after routing.
     def process_resource(self, req, resp, resource, params):
-        if 'cookie' not in req.cookies and not hasattr(resource, 'no_auth'):
+        if 'theCookie' not in req.cookies and not hasattr(resource, 'no_auth'):
             raise falcon.HTTPBadRequest(
                 'Cookie',
                 'No Cookie Provided')

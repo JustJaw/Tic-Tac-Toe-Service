@@ -1,49 +1,55 @@
 import falcon
 from pymongo import MongoClient
+from pymongo.collection import ReturnDocument
 import smtplib
 import Controller.MailController as MailResource
+from bson import json_util, ObjectId
 
 KEY = "abracadabra"
 
 
 client = MongoClient()
 db = client['tic-tac-toe']
-collection = db['users']
+usersCollection = db['users']
+
 
 class addUser:
     def on_post(self, req, resp):
         user = req.media
         user['enabled'] = False
         user['winner'] = " "
-        user['grid'] = [" "," "," "," "," "," "," "," "]
+        user['grid'] = [" ", " ", " ", " ", " ", " ", " ", " "]
 
         email_message = "This is your key\n\tKEY : " + KEY
 
         #MailResource.sendMail(user['email'], email_message)
-        
-        collection.insert(user, check_keys=False)
 
-        resp.media = user
+        usersCollection.insert(user)
+
+        resp.body = json_util.dumps(user)
+        return
+
 
 class verifyUser:
     def on_post(self, req, resp):
         user = req.media
-        userEmail= user['email']
+        userEmail = user['email']
 
-        userFromDB= db.collection.find_one({'email': userEmail})
+        userFromDB = usersCollection.find_one({"email": userEmail})
 
-        user_enabled = {"enabled": True}
-
-        if userFromDB == "":    
-            print("Wrong email")
+        if userFromDB is None:
+            resp.media = {"error": "Wrong Email"}
+            return
         else:
             if user['key'] != KEY:
                 raise falcon.HTTPBadRequest(
                     'KEY',
                     'Incorrect key')
 
-            userFromDB['enabled'] = True
-            collection.update_one({'_id': userFromDB['_id']}, {
-                                  "$set": user_enabled}, upsert=False)
-            resp.media =user
-    
+            user_enabled = {"enabled": True}
+            userFromDB = usersCollection.find_one_and_update({'_id': userFromDB['_id']}, {
+                "$set": user_enabled}, return_document=ReturnDocument.AFTER)
+
+            print(userFromDB)
+            resp.media = {"success": "You have been verified"}
+            return

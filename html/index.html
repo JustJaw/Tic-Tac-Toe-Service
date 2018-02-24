@@ -1,1 +1,156 @@
-<h2>Testing HTML</h2>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        #theContent {
+            margin-top: 5%;
+            text-align: center;
+            /*margin: auto 0;*/
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <form id="signForm" action="" method="POST" role="form">
+                    <legend>Sign Up</legend>
+                
+                    <div class="form-group">
+                        <label for=""></label>
+                        <input type="email" class="form-control" name="" id="signEmail" placeholder="Email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for=""></label>
+                        <input type="text" class="form-control" name="" id="signUserName" placeholder="UserName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for=""></label>
+                        <input type="password" class="form-control" name="" id="signPassword" placeholder="Password" required>
+                    </div>
+                
+                    <button type="submit" id="signup" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            <div class="col-lg-3">
+                <form id="loginForm" action="" method="POST" role="form">
+                    <legend>Log In</legend>
+                
+                    <div class="form-group">
+                        <label for=""></label>
+                        <input type="text" class="form-control" name="" id="logUsername" placeholder="User Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for=""></label>
+                        <input type="password" class="form-control" name="" id="logPassword" placeholder="Password">
+                    </div>
+                
+                    <button type="submit" id="login" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            <div class="col-lg-3">
+                <form id="verForm" action="" method="POST" role="form">
+                    <legend>Verify</legend>
+                
+                    <div class="form-group">
+                        <label for=""></label>
+                        <input type="text" class="form-control" name="" id="verifyEmail" placeholder="Email">
+                    </div>
+                
+                    <button type="button" id="verify" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+
+    //url = "http://130.245.171.42"
+    url = "http://localhost:8000"
+    $("#signForm").submit(function(e){
+        e.preventDefault()
+        var theData = {
+            "username" : $("#signUserName").val(),
+            "email" : $("#signEmail").val(),
+            "password" : $("#signPassword").val()
+        }
+
+        $.ajax({
+            type: "POST",
+            url: url+"/adduser",
+            data: JSON.stringify(theData),
+            success: function (data) {
+                console.log(data)
+                alert(data)
+                console.log("GOOD")
+            },
+            error: function (data) {
+                console.log(data)
+                alert(data)
+                console.log("ERROR")
+            },
+            dataType: "JSON",
+            contentType: "application/json; charset=utf-8",
+        });
+
+        
+    });
+
+    $("#loginForm").submit(function(e){
+        e.preventDefault()
+        var theData = {
+            "username" : $("#logUsername").val(),
+            "password" : $("#logPassword").val()
+        }
+
+        $.ajax({
+            type: "POST",
+            url: url+"/login",
+            data: JSON.stringify(theData),
+            success: function (data) {
+
+                if(data.Status = "OK") {
+                    window.location.href = url+"/ttt/";
+                }
+                console.log(data)
+                alert(data)
+            },
+            error: function (data) {
+                alert(data.message)
+            },
+            dataType: "JSON",
+            contentType: "application/json; charset=utf-8",
+        });
+    });
+
+    $("#verForm").submit(function(e){
+        e.preventDefault()
+        var theData = {
+            "email" : $("#verifyEmail").val(),
+            "key" : "abracadabra"
+        }
+
+        $.ajax({
+            type: "POST",
+            url: url+"/verify",
+            data: JSON.stringify(theData),
+            success: function (data) {
+                console.log(data)
+                alert(data)
+            },
+            error: function (data) {
+                alert(data.message)
+            },
+            dataType: "JSON",
+            contentType: "application/json; charset=utf-8",
+        });
+    });
+</script>

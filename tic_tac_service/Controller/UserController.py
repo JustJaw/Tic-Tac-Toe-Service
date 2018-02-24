@@ -12,9 +12,7 @@ KEY = "abracadabra"
 
 class addUser:
     no_auth = True
-
     def on_post(self, req, resp):
-
         #Creates new user
         user = req.media
         user['enabled'] = False

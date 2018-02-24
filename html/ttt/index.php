@@ -72,6 +72,9 @@ if($_POST["name"]) {
     //Empty Space
     var E = " "
 
+    //Tie Space?
+    var T = " "
+
     var X = "X"
     var O = "O"
 
@@ -80,37 +83,52 @@ if($_POST["name"]) {
                 E, E, E]
 
     
+
+    var url = "http://130.245.171.42"
+
     $(".clickGrid").click(function() {
         
         var idSelected =$(this).attr('id').slice(2); 	
 
         if (grid[idSelected]===E){
-
-            grid[idSelected] = X
-            
-            playMove();
+            placeMove(X,idSelected)
+            serverPlayMove();
         }
         else{
             alert("You clicked a field aleady selected")
         }
-
     });
 
-    var placeMove = function(player, move){
-        
+    var placeMove = function(player, move) {
+        if(player === X) {
+            grid[move] = player    
+            $("#g-"+move).css("background-color",red)
+        }
+        else if(player === O) {
+            grid[move] = player    
+            $("#g-"+move).css("background-color",blue)
+        }
     }
 
-    var playMove = function() {
+    var gridIsFull = function() {
+        for (let space of grid) {
+            if(space === E) {
+                return false
+            }
+        }
+        return true
+    }
+
+    var serverPlayMove = function() {
         
         var theData = {
             "grid" : grid,
             "winner": E  
         } 
-        
 
         $.ajax({
             type: "POST",
-            url: "http://130.245.171.42/ttt/play",
+            url: url+"/ttt/play",
             data: JSON.stringify(theData),
             success: function (data) {
                 winner = data.winner;
@@ -120,7 +138,9 @@ if($_POST["name"]) {
                 if(winner == X || winner == O) {
                     alert(winner + " WINS!")
                 }
-                else if(w)
+                if(gridIsFull()) {
+                    alert("TIE GAME")
+                }
             },
             error: function (data) {
                 console.log(data)
@@ -129,4 +149,24 @@ if($_POST["name"]) {
             contentType: "application/json; charset=utf-8",
         });
     };
+
+    var getGameBoard = function() {
+        $.ajax({
+            type: "GET",
+            url: url+"/getgameboard",
+            data: JSON.stringify(theData),
+            success: function (data) {
+                winner = data.winner;
+                
+                if(winner == X || winner == O) {
+                    alert(winner + " won this game.")
+                }
+                if(gridIsFull()) {
+                    alert("The game was a tie.")
+                }
+            },
+            error: function (data) {
+                console.log(data)
+            },
+    }
 </script>

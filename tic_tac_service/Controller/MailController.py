@@ -1,12 +1,14 @@
 import smtplib
 
+# The server is itself
 SERVER = 'localhost'
+EMAIL_FROM = "Tic-Tac@Tac.com"
 
-def sendMail(to_email,email_content):
-    email_from = "Tic-Tac@Tac.com"
-    email_subject = 'Verify Email'
+def sendMail(to_email,email_subject,email_content):
+    message = 'Subject: {}\n\n{}'.format(email_subject, email_content)
 
     smtp = smtplib.SMTP(SERVER)
     smtp.starttls()
-    smtp.sendmail(email_from, to_email, email_content)
+    smtp.sendmail(EMAIL_FROM, to_email, message)
+    smtp.no
     smtp.quit()

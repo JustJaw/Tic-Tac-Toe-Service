@@ -7,6 +7,7 @@ from pymongo.collection import ReturnDocument
 from bson import json_util
 from bson.objectid import ObjectId
 import datetime
+import pprint
 
 CLIENT_PLAYER = 'X'
 SERVER_PLAYER = 'O'
@@ -39,7 +40,7 @@ def create_new_game(user_id):
     #Inserts creates new game and sets id for the grading script
     new_game_id = DB.games.insert_one(new_game).inserted_id
     current_game_id = {}
-    current_game_id['id'] = new_game_id
+    current_game_id['id'] = str(new_game_id)
     game = DB.games.find_one_and_update({'_id': new_game_id}, {
         "$set": current_game_id}, return_document=ReturnDocument.AFTER)
 
@@ -153,6 +154,9 @@ class PlayResource:
                 except ValueError: # If there are no empty spaces left
                     winner = TIE_WINNER
                     game['finished'] = True
+            else:
+                # Used to save the last move which is the user's winning move
+                move = c_move
 
             if(winner is CLIENT_PLAYER or winner is SERVER_PLAYER):
                game['finished'] = True
@@ -160,7 +164,8 @@ class PlayResource:
             gameplay = {
                 'grid': grid,
                 'winner': winner,
-                'move': move
+                'move': move,
+                'status': "OK"
             }
 
             game['gameplay'] = gameplay
@@ -168,12 +173,13 @@ class PlayResource:
         
 
             # Clear grid and saves game if winner is decided
-            if (game['finished'] and winner is TIE_WINNER):
-                gameplay['grid'] = EMPTY_GRID
+            # if (game['finished'] and winner is TIE_WINNER):
+            #    gameplay['grid'] = EMPTY_GRID
 
         else:
             gameplay = game['gameplay']
             gameplay['move'] = move
+            gameplay['status'] = "OK"
             
         resp.media = gameplay
 
@@ -189,22 +195,49 @@ class GameBoard:
         user_id = str(req.cookies['theCookie'])
         game = get_game_of_user(user_id)
         if game is None:
-            resp.media = {"Status": "ERROR", "Message": "Not Verified"}
+            resp.media = {"status": "ERROR", "Message": "Not Verified"}
         else:
             game_board = game['gameplay']
             resp.body = json_util.dumps(game_board)
+
+
+class getscore:
+    def on_get(self, req, resp):
+        user_id = str(req.cookies['theCookie'])
+
+        user = DB.users.find_one(
+            {"_id": ObjectId(user_id), "enabled": False})
+        
+        if(user is None):
+            resp.media = {"Status": "ERROR", "Message": "Not Verified"}
+        else:
+            score = {
+                "status" : "OK",
+                "human" : user['human'],
+                "wopr": user['wopr'],
+                "tie": user['tie'],
+
+            }
+
+            resp.media = score
+
+        
 
 ########### added by teddy onwards
 class listgames:
 
     no_auth = True
 
-    def on_post(self, req, resp):
+    def on_get(self, req, resp):
 
-        games = DB.games.find()
+        gamesDB = DB.games.find()
+
+        games = {
+            "status": "OK",
+            "games": json_util.loads(json_util.dumps(gamesDB)),
+        }
         
         resp.body = json_util.dumps(games)
-        return;
 
 
 class getgame:
@@ -217,7 +250,7 @@ class getgame:
 
         gameID= Tempgame['id'] 
         
-        gameFromDB = games.find_one({"id": gameID})
+        gameFromDB = DB.games.find_one({"id": gameID})
 
         if gameFromDB is not None:
 
@@ -227,7 +260,8 @@ class getgame:
             
             TempWinner= TempGameplay['winner']
 
-            resp.media = {"Status": "Ok", "grid":TempGrid, "winner":TempWinner }
+            resp.media = {"status": "Ok", "grid":TempGrid, "winner":TempWinner }
 
         else:
-            resp.body="Wrong ID"
+            resp.media = {"status": "ERROR",
+                          "message": "Wrong ID"}

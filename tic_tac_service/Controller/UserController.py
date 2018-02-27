@@ -6,25 +6,39 @@ import Controller.MailController as MailResource
 from bson import json_util, ObjectId
 import Controller.GameController as Game
 import dbmongo as DB
+import py
+# from falcon_cors import CORS
 
+#Global key for grading script
 KEY = "abracadabra"
+SERVER_VERIFY = 'http://130.245.171.42/verify/'
+EMAIL_SUBJECT = 'Verify Your Email'
 
 
+# Creates a new user
 class addUser:
+    #Used to not check for cookies
     no_auth = True
+ 
     def on_post(self, req, resp):
-        #Creates new user
+
         user = req.media
+
+        # Used for email message
+        email_in_url_param = user['email'].replace(".", "||") + "/"
+
         user['enabled'] = False
         user['human'] = 0
         user['wopr'] = 0
         user['tie'] = 0
         user_id = DB.users.insert_one(user).inserted_id
 
+
         #Sends email
-        email_message = "This is your key\n\tKEY : " + KEY
-        #MailResource.sendMail(user['email'], email_message)
-        
+        email_message = "This is your key\n\tKEY : " + KEY + "\n"
+        email_message += "OR\nClick Below\n"
+        email_message += "\n" + SERVER_VERIFY + email_in_url_param + KEY
+        MailResource.sendMail(user['email'], EMAIL_SUBJECT, email_message)
 
         Game.create_new_game(user_id)
 
@@ -35,28 +49,34 @@ class addUser:
 class verifyUser:
     no_auth = True
 
-    def on_post(self, req, resp):
-        user = req.media
-        userEmail = user['email']
+    def on_get(self, req, resp, email, key):
+        email = email.replace("||", ".")
 
-        userFromDB = DB.users.find_one({"email": userEmail})
-
-        if userFromDB is None:
-            resp.media = {"status": "error", "message": "Wrong Email"}
-            return
+        if(self.able_to_verify(email, key) == True):
+            resp.media = {"status": "OK"}
         else:
-            if user['key'] != KEY:
-                raise falcon.HTTPBadRequest(
-                    'KEY',
-                    'Incorrect key')
+            resp.media = {"status": "error", "message": "Incorrect Email"}
+
+    def on_post(self, req, resp):
+        userEmail = req.media['email']
+        userKey = req.media['key']
+
+        if(self.able_to_verify(userEmail, userKey) == True):
+            resp.media = {"status": "OK"}
+        else:
+            resp.media = {"status": "error", "message": "Incorrect Email"}
+
+    def able_to_verify(self, userEmail, userKey):
+            userFromDB = DB.users.find_one({"email": userEmail})
+
+            if userFromDB is None or userKey != KEY:
+                return False
 
             user_enabled = {"enabled": True}
             userFromDB = DB.users.find_one_and_update({'_id': userFromDB['_id']}, {
                 "$set": user_enabled}, return_document=ReturnDocument.AFTER)
 
-            print(userFromDB)
-            resp.media = {"status": "OK"}
-            return
+            return True
 
 
 class cookieTest:

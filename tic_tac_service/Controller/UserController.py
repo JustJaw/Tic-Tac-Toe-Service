@@ -6,7 +6,6 @@ import Controller.MailController as MailResource
 from bson import json_util, ObjectId
 import Controller.GameController as Game
 import dbmongo as DB
-import py
 # from falcon_cors import CORS
 
 #Global key for grading script

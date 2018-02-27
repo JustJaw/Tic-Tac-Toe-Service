@@ -250,7 +250,7 @@ class getgame:
 
         gameID= Tempgame['id'] 
         
-        gameFromDB = DB.games.find_one({"id": gameID})
+        gameFromDB = DB.games.find_one({"_id": ObjectId(gameID)})
 
         if gameFromDB is not None:
 

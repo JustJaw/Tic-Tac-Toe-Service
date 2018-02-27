@@ -206,7 +206,7 @@ class getscore:
         user_id = str(req.cookies['theCookie'])
 
         user = DB.users.find_one(
-            {"_id": ObjectId(user_id), "enabled": False})
+            {"_id": ObjectId(user_id), "enabled": True})
         
         if(user is None):
             resp.media = {"Status": "ERROR", "Message": "Not Verified"}

@@ -13,6 +13,7 @@ def addRoutes(api):
     api.add_route('/listgames', GameController.listgames())
     api.add_route('/getgame', GameController.getgame())
     api.add_route('/getgameboard', GameController.GameBoard())
+    api.add_route('/getscore', GameController.getscore())
     return api
 
 

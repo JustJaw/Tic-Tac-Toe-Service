@@ -10,5 +10,4 @@ def sendMail(to_email,email_subject,email_content):
     smtp = smtplib.SMTP(SERVER)
     smtp.starttls()
     smtp.sendmail(EMAIL_FROM, to_email, message)
-    smtp.no
     smtp.quit()

@@ -112,3 +112,4 @@ class logout:
     no_auth = True
     def on_post(self, req, resp):
         resp.unset_cookie('theCookie')
+        resp.media = {"status": "OK"}

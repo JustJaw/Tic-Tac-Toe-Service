@@ -261,7 +261,7 @@ class getgame:
             
             TempWinner= TempGameplay['winner']
 
-            resp.media = {"status": "Ok", "grid":TempGrid, "winner":TempWinner }
+            resp.media = {"status": "OK", "grid":TempGrid, "winner":TempWinner }
 
         else:
             resp.media = {"status": "ERROR",

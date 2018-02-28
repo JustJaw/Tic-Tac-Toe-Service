@@ -1,4 +1,5 @@
 import falcon
+import httperrors as HTTP_ERRORS
 from bson import json_util
 
 class Middleware(object):
@@ -10,9 +11,7 @@ class Middleware(object):
     # Process the request after routing.
     def process_resource(self, req, resp, resource, params):
         if 'theCookie' not in req.cookies and not hasattr(resource, 'no_auth'):
-            raise falcon.HTTPBadRequest(
-               'Cookie',
-               'No Cookie Provided')
+            raise HTTP_ERRORS.HTTP_OK_ERROR('Cookie', 'No Cookie Provided')
         
             
     # Post-processing of the response (after routing).

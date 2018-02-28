@@ -238,9 +238,9 @@ class listgames:
         resp.body = self.get_games()
 
     def get_games(self):
-        started_games = {"start_date": {"$ne": None}}
+        finished_games = {"start_date": {"$ne": None},"finished":True}
 
-        gamesDB = DB.games.find(started_games)
+        gamesDB = DB.games.find(finished_games)
 
         games = {
             "status": "OK",

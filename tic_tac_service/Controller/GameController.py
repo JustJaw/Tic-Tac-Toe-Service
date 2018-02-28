@@ -164,8 +164,7 @@ class PlayResource:
             gameplay = {
                 'grid': grid,
                 'winner': winner,
-                'move': move,
-                'status': "OK"
+                'move': move
             }
 
             game['gameplay'] = gameplay
@@ -179,8 +178,8 @@ class PlayResource:
         else:
             gameplay = game['gameplay']
             gameplay['move'] = move
-            gameplay['status'] = "OK"
             
+        gameplay['status'] = "OK"
         resp.media = gameplay
 
 class GamesResource:

@@ -54,7 +54,7 @@ class verifyUser:
         if(self.able_to_verify(email, key) == True):
             resp.media = {"status": "OK"}
         else:
-            resp.media = {"status": "error", "message": "Incorrect Email"}
+            resp.media = {"status": "ERROR", "message": "Incorrect Email"}
 
     def on_post(self, req, resp):
         userEmail = req.media['email']
@@ -63,7 +63,7 @@ class verifyUser:
         if(self.able_to_verify(userEmail, userKey) == True):
             resp.media = {"status": "OK"}
         else:
-            resp.media = {"status": "error", "message": "Incorrect Email"}
+            resp.media = {"status": "ERROR", "message": "Incorrect Email"}
 
     def able_to_verify(self, userEmail, userKey):
             userFromDB = DB.users.find_one({"email": userEmail})

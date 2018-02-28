@@ -105,7 +105,7 @@ def save_game(game):
         userFromDB = DB.users.find_one_and_update({'_id': user_id}, {
             "$inc": the_winner}, return_document=ReturnDocument.AFTER)
         
-        gameplay['grid'] = EMPTY_GRID
+        # gameplay['grid'] = EMPTY_GRID
 
     return gameplay
 

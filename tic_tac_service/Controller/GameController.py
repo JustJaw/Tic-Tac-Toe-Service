@@ -230,7 +230,9 @@ class listgames:
 
     def on_get(self, req, resp):
 
-        gamesDB = DB.games.find()
+        started_games = {"start_date": {"$ne": None}}
+
+        gamesDB = DB.games.find(started_games)
 
         games = {
             "status": "OK",

@@ -202,10 +202,10 @@ class GameBoard:
 
 class getscore:
     def on_get(self, req, resp):
-        get_score(req, resp)
+        resp.media = self.get_score(req, resp)
 
     def on_post(self,req,resp):
-        get_score(req, resp)
+        resp.media = self.get_score(req, resp)
 
     def get_score(self, req, resp):
         user_id = str(req.cookies['theCookie'])
@@ -214,7 +214,7 @@ class getscore:
             {"_id": ObjectId(user_id), "enabled": True})
 
         if(user is None):
-            resp.media = {"Status": "ERROR", "Message": "Not Verified"}
+            score = {"Status": "ERROR", "Message": "Not Verified"}
         else:
             score = {
                 "status": "OK",
@@ -222,8 +222,7 @@ class getscore:
                 "wopr": user['wopr'],
                 "tie": user['tie']
             }
-
-            resp.media = score
+        return score
 
         
 
@@ -233,10 +232,10 @@ class listgames:
     no_auth = True
 
     def on_get(self, req, resp):
-        get_games()
+        resp.body = self.get_games()
         
     def on_post(self, req, resp):
-        get_games()
+        resp.body = self.get_games()
 
     def get_games(self):
         started_games = {"start_date": {"$ne": None}}
@@ -248,7 +247,7 @@ class listgames:
             "games": json_util.loads(json_util.dumps(gamesDB)),
         }
 
-        resp.body = json_util.dumps(games)
+        return json_util.dumps(games)
 
 
 class getgame:
